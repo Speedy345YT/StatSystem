@@ -1,7 +1,3 @@
-using System;
-using System.Diagnostics;
-using System.Threading.Tasks;
-
 public interface IStat
 {
     void RemoveModifier(StatModifierBase mod);
