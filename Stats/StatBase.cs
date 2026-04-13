@@ -29,10 +29,3 @@ public class StatModifier<T> : StatModifierBase
         this.type = type;
     }
 }
-public static class TaskExtensions
-{
-    static object AfterTicks(this object m, int ticks)
-    {
-        return (object)m;
-    }
-}
