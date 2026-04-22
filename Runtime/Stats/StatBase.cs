@@ -26,4 +26,11 @@ namespace StatSystem
             this.type = type;
         }
     }
+    public enum StatModifierType
+    {
+        Flat, //+5
+        AdditiveMultiplier, //+20%
+        MultiplicativeMultiplier, //*2
+        Set //=2
+    }
 }

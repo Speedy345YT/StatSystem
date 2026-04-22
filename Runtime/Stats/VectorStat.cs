@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 namespace StatSystem
@@ -108,9 +107,7 @@ namespace StatSystem
                                 break;
 
                             case StatModifierType.MultiplicativeMultiplier:
-                                multiplicativeMultProduct.x *= mod.value.x;
-                                multiplicativeMultProduct.y *= mod.value.y;
-                                multiplicativeMultProduct.z *= mod.value.z;
+                                multiplicativeMultProduct = Vector3.Scale(multiplicativeMultProduct, mod.value);
                                 break;
                             case StatModifierType.Set:
                                 if (!hasSet)

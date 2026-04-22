@@ -129,11 +129,4 @@ namespace StatSystem
         public int IntValue => Mathf.RoundToInt(Value);
         public int CeilValue => Mathf.CeilToInt(Value);
     }
-    public enum StatModifierType
-    {
-        Flat, //+5
-        AdditiveMultiplier, //+20%
-        MultiplicativeMultiplier, //*2
-        Set //=2
-    }
 }
