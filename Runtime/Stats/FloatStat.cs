@@ -4,28 +4,16 @@ using UnityEngine;
 
 namespace StatSystem
 {
-    public class FloatStat : IStat<float>
+    [Serializable]
+    public class FloatStat : Stat<float>
     {
-        public float baseValue;
-        public List<StatModifier<float>> modifiers = new();
-
-        public float cachedValue;
-        public float CachedValue
-        {
-            get { return cachedValue; }
-        }
-        bool isDirty = true;
-        public bool IsDirty
-        {
-            get { return isDirty; }
-        }
-
         public FloatStat(float baseValue)
         {
-            this.baseValue = baseValue;
+            BaseValue = baseValue;
+            isDirty = true;
         }
 
-        public StatModifier<float> AddModifier(StatModifier<float> mod)
+        public override StatModifier<float> AddModifier(StatModifier<float> mod)
         {
             var existing = modifiers.Find(m => m == mod);
 
@@ -37,7 +25,7 @@ namespace StatSystem
             isDirty = true;
             return mod;
         }
-        public StatModifier<float> AddModifier(float value, StatModifierType type)
+        public override StatModifier<float> AddModifier(float value, StatModifierType type)
         {
             var mod = new StatModifier<float>(value, type);
             var existing = modifiers.Find(m => m == mod);
@@ -50,7 +38,7 @@ namespace StatSystem
             isDirty = true;
             return mod;
         }
-        public void RemoveModifier(StatModifier<float> mod)
+        public override void RemoveModifier(StatModifier<float> mod)
         {
             var existing = modifiers.Find(m => m == mod);
 
@@ -61,11 +49,7 @@ namespace StatSystem
                 isDirty = true;
             }
         }
-        void IStat.RemoveModifier(StatModifierBase mod)
-        {
-            RemoveModifier(mod as StatModifier<float>);
-        }
-        public void ClearModifier(StatModifier<float> mod)
+        public override void ClearModifier(StatModifier<float> mod)
         {
             var existing = modifiers.Find(m => m == mod);
 
@@ -77,7 +61,7 @@ namespace StatSystem
 
             }
         }
-        public void UpdateModifier(StatModifier<float> mod, float value)
+        public override void UpdateModifier(StatModifier<float> mod, float value)
         {
             var existing = modifiers.Find(m => m == mod);
 
@@ -89,12 +73,12 @@ namespace StatSystem
             }
         }
 
-        public float Value
+        public override float Value
         {
             get
             {
                 if (!isDirty)
-                    return cachedValue;
+                    return CachedValue;
 
                 float flatSum = 0;
                 float additiveMultSum = 0;
@@ -126,18 +110,18 @@ namespace StatSystem
                         }
                     }
                 }
-                float baseToUse = hasSet ? setValue : baseValue;
+                float baseToUse = hasSet ? setValue : BaseValue;
 
-                cachedValue = (baseToUse + flatSum) * (1f + additiveMultSum) * multiplicativeMultProduct;
+                CachedValue = (baseToUse + flatSum) * (1f + additiveMultSum) * multiplicativeMultProduct;
                 isDirty = false;
 
-                return cachedValue;
+                return CachedValue;
             }
         }
         public int FloorValue => Mathf.FloorToInt(Value);
         public int RoundValue => Mathf.RoundToInt(Value);
         public int CeilValue => Mathf.CeilToInt(Value);
-        public float ChangeValue => Value / baseValue;
-        public float ChangePercent => Value / baseValue * 100;
+        public float ChangeValue => Value / BaseValue;
+        public float ChangePercent => Value / BaseValue * 100;
     }
 }

@@ -1,29 +1,18 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 namespace StatSystem
 {
-    public class VectorStat : IStat<Vector3>
+    [Serializable]
+    public class VectorStat : Stat<Vector3>
     {
-        public Vector3 baseValue;
-        public List<StatModifier<Vector3>> modifiers { get; } = new();
-
-        public Vector3 cachedValue;
-        public Vector3 CachedValue
-        {
-            get { return cachedValue; }
-        }
-        bool isDirty = true;
-        public bool IsDirty
-        {
-            get { return isDirty; }
-        }
         public VectorStat(Vector3 baseValue)
         {
-            this.baseValue = baseValue;
+            BaseValue = baseValue;
             isDirty = true;
         }
 
-        public StatModifier<Vector3> AddModifier(StatModifier<Vector3> mod)
+        public override StatModifier<Vector3> AddModifier(StatModifier<Vector3> mod)
         {
             var existing = modifiers.Find(m => m == mod);
 
@@ -35,7 +24,7 @@ namespace StatSystem
             isDirty = true;
             return mod;
         }
-        public StatModifier<Vector3> AddModifier(Vector3 value, StatModifierType type)
+        public override StatModifier<Vector3> AddModifier(Vector3 value, StatModifierType type)
         {
             var mod = new StatModifier<Vector3>(value, type);
             var existing = modifiers.Find(m => m == mod);
@@ -48,7 +37,7 @@ namespace StatSystem
             isDirty = true;
             return mod;
         }
-        public void RemoveModifier(StatModifier<Vector3> mod)
+        public override void RemoveModifier(StatModifier<Vector3> mod)
         {
             var existing = modifiers.Find(m => m == mod);
 
@@ -60,11 +49,7 @@ namespace StatSystem
 
             }
         }
-        void IStat.RemoveModifier(StatModifierBase mod)
-        {
-            RemoveModifier(mod as StatModifier<Vector3>);
-        }
-        public void ClearModifier(StatModifier<Vector3> mod)
+        public override void ClearModifier(StatModifier<Vector3> mod)
         {
             var existing = modifiers.Find(m => m == mod);
 
@@ -76,7 +61,7 @@ namespace StatSystem
 
             }
         }
-        public void UpdateModifier(StatModifier<Vector3> mod, Vector3 value)
+        public override void UpdateModifier(StatModifier<Vector3> mod, Vector3 value)
         {
             var existing = modifiers.Find(m => m == mod);
 
@@ -87,12 +72,12 @@ namespace StatSystem
                 isDirty = true;
             }
         }
-        public Vector3 Value
+        public override Vector3 Value
         {
             get
             {
                 if (!isDirty)
-                    return cachedValue;
+                    return CachedValue;
 
                 Vector3 flatSum = Vector3.zero;
                 Vector3 additiveMultSum = Vector3.zero;
@@ -120,33 +105,33 @@ namespace StatSystem
                             case StatModifierType.Set:
                                 if (!hasSet)
                                 {
-                                    setValue = baseValue;
+                                    setValue = BaseValue;
                                     hasSet = true;
                                 }
 
-                                if (mod.value.x != baseValue.x) setValue.x = mod.value.x;
-                                if (mod.value.y != baseValue.y) setValue.y = mod.value.y;
-                                if (mod.value.z != baseValue.z) setValue.z = mod.value.z;
+                                if (mod.value.x != BaseValue.x) setValue.x = mod.value.x;
+                                if (mod.value.y != BaseValue.y) setValue.y = mod.value.y;
+                                if (mod.value.z != BaseValue.z) setValue.z = mod.value.z;
                                 break;
                         }
                     }
                 }
 
-                Vector3 baseToUse = hasSet ? setValue : baseValue;
+                Vector3 baseToUse = hasSet ? setValue : BaseValue;
 
-                cachedValue = Vector3.Scale(baseToUse + flatSum, (Vector3.one + additiveMultSum));
+                CachedValue = Vector3.Scale(baseToUse + flatSum, (Vector3.one + additiveMultSum));
 
-                cachedValue = Vector3.Scale(cachedValue, multiplicativeMultProduct);
+                CachedValue = Vector3.Scale(CachedValue, multiplicativeMultProduct);
                 isDirty = false;
 
-                return cachedValue;
+                return CachedValue;
             }
         }
         public float x => Value.x;
         public float y => Value.y;
         public float z => Value.z;
-        public float magnitude => Value.magnitude;
-        public Vector3 normalized => Value.normalized;
-        public Vector3 ChangePercent => new Vector3(Value.x / baseValue.x, Value.y / baseValue.y, Value.z / baseValue.z);
+        public float Magnitude => Value.magnitude;
+        public Vector3 Normalized => Value.normalized;
+        public Vector3 ChangePercent => new Vector3(Value.x / BaseValue.x, Value.y / BaseValue.y, Value.z / BaseValue.z);
     }
 }
