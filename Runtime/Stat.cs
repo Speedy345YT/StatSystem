@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Sirenix.OdinInspector;
 
 namespace StatSystem
 {
@@ -7,9 +6,6 @@ namespace StatSystem
     {
         void RemoveModifier(StatModifierBase mod);
     }
-    #if ODIN_INSPECTOR
-    [InlineProperty(LabelWidth = 100)]
-    #endif
     public abstract class Stat<T> : Stat
     {
         public abstract StatModifier<T> AddModifier(StatModifier<T> mod);
